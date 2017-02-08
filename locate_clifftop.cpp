@@ -118,7 +118,7 @@ int CDelineation::nLocateCliffTop(void)
 	 for (int i = 0; i < nProfSize; i++)
 	 {
 	    dDetrendedProfileElev[i] = (dVProfileZ[i] - dElevationChangeperUnitdistance*dVProfileDistXY[i]) - dVProfileZ[0];
-	    if (dDetrendedProfileElev[i] >= dDetrendedProfileMaxElev && !bFPIsEqual(dDetrendedProfileElev[i], dDetrendedProfileMaxElev, m_dEleTolerance))
+	    if (dDetrendedProfileElev[i] >= dDetrendedProfileMaxElev && dDetrendedProfileElev[i]>= m_dEleTolerance)
 	    {
 	       dDetrendedProfileMaxElev = dDetrendedProfileElev[i];
 	       nCliffTopIndex = i;
@@ -128,7 +128,7 @@ int CDelineation::nLocateCliffTop(void)
 	 double  dDetrendedProfileMinElev = 0;
 	 for (int i = 0; i < nProfSize; i++)
 	 {
-	    if ((dDetrendedProfileElev[i] <= dDetrendedProfileMinElev)&& !bFPIsEqual(dDetrendedProfileElev[i], dDetrendedProfileMaxElev, m_dEleTolerance) && (i < nCliffTopIndex))
+	    if ((dDetrendedProfileElev[i] <= dDetrendedProfileMinElev)&& (dDetrendedProfileElev[i] <= -m_dEleTolerance) && (i < nCliffTopIndex))
 	    {
 	       dDetrendedProfileMinElev = dDetrendedProfileElev[i];
 	       nCliffToeIndex = i;
