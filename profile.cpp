@@ -235,20 +235,34 @@ int CProfile::nGetCliffTopPoint(void) const
 {
    return m_nCliffTopPoint;
 }
-
+double CProfile::dGetCliffTopChainage(void) const
+{
+   return m_nCliffTopChainage;
+}
 int CProfile::nGetCliffToePoint(void) const
 {
    return m_nCliffToePoint;
+}
+double CProfile::dGetCliffToeChainage(void) const
+{
+   return m_nCliffToeChainage;
 }
 
 void CProfile::SetCliffTopPoint(const int n)
 {
    m_nCliffTopPoint = n;
 }
-
+void CProfile::SetCliffTopChainage(const double x)
+{
+   m_nCliffTopChainage = x;
+}
 void CProfile::SetCliffToePoint(const int n)
 {
    m_nCliffToePoint = n;
+}
+void CProfile::SetCliffToeChainage(const double x)
+{
+   m_nCliffToeChainage = x;
 }
 void CProfile::SetCliffTopQualityFlag(const bool isOK)
 {

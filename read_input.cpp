@@ -499,7 +499,7 @@ bool CDelineation::bReadRunData(void)
             break;
 	    
          case 20:
-            // Vertical tolerance to consider two elevations different
+            // Vertical tolerance avoid false CliffTops/Toes
              m_dEleTolerance = atof(strRH.c_str());
             if (m_dEleTolerance <= 0)
                strErr = "vertical elevation tolerance must be greater than zero";

@@ -149,6 +149,10 @@ int CDelineation::nLocateCliffTop(void)
 	 // Save the profile index at which the Cliff Top and Toe has been located
 	 pProfile->SetCliffTopPoint(nCliffTopIndex);
 	 pProfile->SetCliffToePoint(nCliffToeIndex);
+	 
+	 // Save the Chainage at which the Cliff Top and Toe has been located
+	 pProfile->SetCliffTopChainage(dVProfileDistXY[nCliffTopIndex]);
+	 pProfile->SetCliffToeChainage(dVProfileDistXY[nCliffToeIndex]);
 
 	 // If desired, save this coastline-normal profile data for checking purposes
          if (m_bOutputProfileData)

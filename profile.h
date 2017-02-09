@@ -51,6 +51,9 @@ private:
       m_nNumCoastPoint,          // The coastline point at which this profile hits the coast (not necessarily coincident wih the profile start cell)
       m_nCliffTopPoint,          // The profile point at which the cliff top is located
       m_nCliffToePoint;          // The profile point at which the cliff toe is located
+   double
+      m_nCliffTopChainage,
+      m_nCliffToeChainage;
 
    vector<C2DIPoint>
       m_VCellInProfile;         // In grid CRS, the integer coords of the cells 'under' this profile. NOTE Point zero is the same as 'cell marked as coastline' in coast object
@@ -72,9 +75,13 @@ public:
 
    void SetCliffTopPoint(int const);
    int nGetCliffTopPoint(void) const;
-
+   double dGetCliffTopChainage(void) const;
+   void SetCliffTopChainage(double const);
+   
    void SetCliffToePoint(int const);
    int nGetCliffToePoint(void) const;
+   double dGetCliffToeChainage(void) const;
+   void SetCliffToeChainage(double const);
    
    void SetCliffTopQualityFlag(bool const);
    bool bGetCliffTopQualityFlag(void) const;

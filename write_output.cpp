@@ -182,12 +182,12 @@ void CDelineation::WriteStartRunDetails(void)
    // -------------------------------------------------------- Other data --------------------------------------------------------
    OutStream << "Other Input Data" << endl;
 
-   OutStream << " Still water level used to extract shoreline               \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << setprecision(1) << m_dOrigSWL << " m" << endl;
+   OutStream << " Still water level used to extract shoreline               \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << setprecision(1) << m_dStillWaterLevel << " m" << endl;
    OutStream << " Minimum spacing of coastline normals                      \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << m_dCoastNormalAvgSpacing << " m" << endl;
    OutStream << " Random factor for spacing of normals                      \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << m_dCoastNormalRandSpaceFact << endl;
    OutStream << " Length of coastline normals                               \t: " << m_dCoastNormalLength << " m" << endl;
    OutStream << " Maximum number of 'cape' normals                          \t: " << m_nCapeNormals << endl;
-   OutStream << " Vertical tolerance to consider two elevations different   \t: " << m_dEleTolerance << endl;
+   OutStream << " Vertical tolerance avoid false CliffTops/Toes             \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << setprecision(3) << m_dEleTolerance << " m" << endl;
    OutStream << endl;
    OutStream << endl << endl;
 

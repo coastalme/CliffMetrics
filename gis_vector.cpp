@@ -377,22 +377,29 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
             cerr << ERR << "cannot create " << strType << " attribute field 3 '" << strFieldValue3 << "' in " << strFilePathName << "\n" << CPLGetLastErrorMsg() << endl;
             return false;
          }
-         // Also create other real-numbered values for the coastline-normalprofile
+         // Also create other real-numbered values for the cliff top and toe elevation and chainage
          string  strFieldValue4;
+	 string  strFieldValue5;
+	 strFieldValue5 = "Chainage";
          if (nDataItem == PLOT_CLIFF_TOP)
             strFieldValue4 = "CliffTopEl";
          else if (nDataItem == PLOT_CLIFF_TOE)
             strFieldValue4 = "CliffToeEl";
                      
-         OGRFieldDefn
-            OGRField4(strFieldValue4.c_str(), OFTReal);
+         OGRFieldDefn OGRField4(strFieldValue4.c_str(), OFTReal);
+	 OGRFieldDefn OGRField5(strFieldValue5.c_str(), OFTReal);
             
          if (pOGRLayer->CreateField(&OGRField4) != OGRERR_NONE)
          {
             cerr << ERR << "cannot create " << strType << " attribute field 4 '" << strFieldValue4 << "' in " << strFilePathName << "\n" << CPLGetLastErrorMsg() << endl;
             return false;
          }
-
+	 if (pOGRLayer->CreateField(&OGRField5) != OGRERR_NONE)
+         {
+            cerr << ERR << "cannot create " << strType << " attribute field 5 '" << strFieldValue5 << "' in " << strFilePathName << "\n" << CPLGetLastErrorMsg() << endl;
+            return false;
+         }
+         
          // OK, now create features
          OGRLineString OGRls;
          OGRMultiLineString OGRmls;
@@ -416,14 +423,16 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
                     nX,
                     nY,
 		    isQualityOK;
-                  double 
+                  double
                     dX,
-                    dY; 
-                  
-                  if (nDataItem == PLOT_CLIFF_TOP)  
+                    dY,
+		    dChainage;
+
+		  if (nDataItem == PLOT_CLIFF_TOP)  
                   {
-                  CliffPointIndex = pProfile->nGetCliffTopPoint(),
-                  nX = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX(),
+                  CliffPointIndex = pProfile->nGetCliffTopPoint();
+		  dChainage	  = pProfile->dGetCliffTopChainage();
+                  nX = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX();
                   nY = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetY();
                   dX = dGridCentroidXToExtCRSX(pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX());
                   dY = dGridCentroidYToExtCRSY(pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetY());
@@ -435,8 +444,9 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
                   }
                   else if (nDataItem == PLOT_CLIFF_TOE)  
                   {
-                  CliffPointIndex = pProfile->nGetCliffToePoint(),
-                  nX = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX(),
+                  CliffPointIndex = pProfile->nGetCliffToePoint();
+		  dChainage	  = pProfile->dGetCliffToeChainage();
+                  nX = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX();
                   nY = pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetY();
                   dX = dGridCentroidXToExtCRSX(pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetX());
                   dY = dGridCentroidYToExtCRSY(pProfile->pPtiVGetCellsInProfile()->at(CliffPointIndex).nGetY());
@@ -452,12 +462,13 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
 
                   // Get the elevation for both consolidated and unconsolidated sediment on this cell
                   double dVProfileZ = m_pRasterGrid->pGetCell(nX, nY)->dGetSedimentTopElev();
-        
+
                   // Set the feature's attributes
                   pOGRFeature->SetField(strFieldValue1.c_str(), i);
                   pOGRFeature->SetField(strFieldValue2.c_str(), j);
 		  pOGRFeature->SetField(strFieldValue3.c_str(), isQualityOK);
 		  pOGRFeature->SetField(strFieldValue4.c_str(), dVProfileZ);
+		  pOGRFeature->SetField(strFieldValue5.c_str(), dChainage);
 
                   // Create the feature in the output layer
                   if (pOGRLayer->CreateFeature(pOGRFeature) != OGRERR_NONE)
