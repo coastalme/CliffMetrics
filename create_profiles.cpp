@@ -91,11 +91,6 @@ int CDelineation::nCreateAllProfilesAndCheckForIntersection(void)
 ===============================================================================================================================*/
 int CDelineation::nCreateAllProfiles(void)
 {
-   // Set nSearchDist to be double the size of nProfileSpacing: when we have searched along the coast and marked the start point of the new profile, then we keep searching beyond the profile start point. All points searched (except for the just-flagged profile start point) are flagged to prevent them being chosen subsequently as the start point of a profile. This prevents the creation of very narrow polygons (i.e. where the profile-to-profile along-coastline distance is small)
-   int
-      nSearchDist = m_nCoastNormalAvgSpacing,       // Rather approximate, but probably OK
-      nProfileSpacing = nSearchDist / 2;
-
    // For each coastline, search for coastline points from which to start a normal profile
    for (unsigned int nCoast = 0; nCoast < m_VCoast.size(); nCoast++)
    {
@@ -113,44 +108,10 @@ int CDelineation::nCreateAllProfiles(void)
          dVCurvature.push_back(dCurvature);
       }
 
-      // Calculate the convexity threshold, which is two standard deviations below the mean: will not create profiles on coast points with convexity which exceeds this (i.e. with curvature values which are less than this threshold)
-      double
-         dMeanCurvature = dGetMean(&dVCurvature),
-         dStdCurvature = dGetStdDev(&dVCurvature),
-         dCoastProfileConvexityThreshold = dMeanCurvature - (2 * dStdCurvature);
-
-      // If we have a coast with almost identical curvature everywhere (e.g. a straight line), then set the threshold to a big -ve value, so that convexity at coastline points is ignored
-      if (tAbs(dStdCurvature) < TOLERANCE)
-         dCoastProfileConvexityThreshold = -9999;
-
-      // Sort this pair vector in descending order, so that the most concave points are first. Use stable_sort, because this preserves the original sequence of any points with equal curvature values (unlikely...)
-      stable_sort(prVCurvature.begin(), prVCurvature.end(), bCurvaturePairCompare);
-
       // And create a vector of the same length, to mark coastline points which have been searched
       vector<bool> bVPointSearched(nCoastSize, false);
 
-      // Mark points near the start and end of the coastline so that they don't get searched (will be creating 'special' start- and end-of-coast profiles there later)
-      for (int n = 0; n < nProfileSpacing / 2; n++)
-      {
-         if (n < nCoastSize)
-            bVPointSearched[n] = true;
-
-         int m = nCoastSize - n - 1;
-         if (m >= 0)
-            bVPointSearched[m] = true;
-      }
-
-//       LogStream << m_ulTimestep << endl << endl;
-//       LogStream << setiosflags(ios::fixed) << setprecision(8);
-//       for (unsigned int ii = 0; ii < prVCurvature.size(); ii++)
-//          LogStream << prVCurvature[ii].first << " " << prVCurvature[ii].second << endl;
-//       LogStream << endl;
-
-      // Create a maximum of m_nCapeNormals profiles at capes i.e. points on the coastline at which convexity is a maximum
-      bool bFindCape = true;
-      //double dCapeCurvatureThreshold = prVCurvature[nCoastSize - m_nCapeNormals - 1].second;
-      double dCapeCurvatureThreshold = prVCurvature[0].second;
-      
+      // Create Normals profiles at every coast points on the coastline 
       while (true)
       {
          // How many coastline points are still to be searched?
@@ -166,14 +127,9 @@ int CDelineation::nCreateAllProfiles(void)
             // Nope, we are done here
             break;
 
-         // First create the 'cape' profiles, provided the switch is set
-         if (bFindCape)
-         {
             // Look along the vector of pairs starting at the most convex end
-            for (int n = nCoastSize-1; n >= 0; n--)
+            for (int n = 0; n < nCoastSize; n++)
             {
-               if (prVCurvature[n].second <= dCapeCurvatureThreshold)
-               {
                   // Curvature at this coastline point is more convex (i.e. less than) the convexity threshold, so this is a potential location for a 'cape' profile
                   int nCapePoint = prVCurvature[n].first;
                   if (! bVPointSearched[nCapePoint])
@@ -182,185 +138,28 @@ int CDelineation::nCreateAllProfiles(void)
                      int nRet = nCreateProfile(nCoast, nCapePoint, nProfile);
                      bVPointSearched[nCapePoint] = true;
 
-                     if (nRet != RTN_OK)
+                    if (nRet != RTN_OK)
                         // This cape profile is no good (has hit coast, or hit dry land, etc.) so forget about it
                         continue;
-
-                     // The cape profile is fine, so mark points on either side of it
-                     for (int m = 1; m < nProfileSpacing / 2; m++)
-                     {
-                        int nTmpPoint = nCapePoint + m;
-                        if (nTmpPoint < nCoastSize)
-                           bVPointSearched[nTmpPoint] = true;
-
-                        nTmpPoint = nCapePoint - m;
-                        if (nTmpPoint >= 0)
-                           bVPointSearched[nTmpPoint] = true;
-                     }
-                  }
-               }
-               else
-               {
-                  // Looking along the vector of pairs, there are no more coastline points which exceed the convexty threshold, so set a switch and stop searching
-                  bFindCape = false;
-                  break;
-               }
-            }
-         }
-
-         // Now find the most concave point on the coastline that has not already been searched
-         int nMaxConcavePoint = 0;
-         for (int n = 0; n < nCoastSize; n++)
-         {
-            int nConcavePoint = prVCurvature[n].first;
-            if (! bVPointSearched[nConcavePoint])
-            {
-               // Store it and mark it as searched
-               nMaxConcavePoint = nConcavePoint;
-               bVPointSearched[nMaxConcavePoint] = true;
-               break;
-            }
-         }
-
-         // Search the coastline for other normals (and also the beginning or end of the coastline) on either side of this concave point. Do this search in alternate directions, first down-coast (i.e. in increasing coastline point order) then back up-coast (in decreasing coast point order)
-         int nProfileDist;
-         for (int nDirection = DIRECTION_DOWNCOAST; nDirection <= DIRECTION_UPCOAST; nDirection++)
-         {
-            int
-               nThisPoint = -1,
-               nProfileStartPoint = -1;
-
-            // We know the point of max curvature (the node point), so next find out where in relation to this we want the normal profile to start. First calculate the profile spacing, this can vary if we have a random factor
-            if (nDirection == DIRECTION_DOWNCOAST)
-//                nProfileDist = tMax(m_nCoastNormalAvgSpacing, static_cast<int>(nProfileSpacing * (1 + (dGetRand0Gaussian() * m_dCoastNormalRandSpaceFact))));
-               nProfileDist = nProfileSpacing * (1 + (dGetRand0Gaussian() * m_dCoastNormalRandSpaceFact));
-
-            // TODO Assume that the above is the profile spacing on straight bits of coast. Try gradually increasing the profile spacing with increasing concavity, and decreasing the profile spacing with increasing convexity. Could use a Michaelis-Menten S-curve relationship
-//             double fReN = pow(NowCell[nX][nY].dGetReynolds(m_dNu), m_dDepN);
-//             double fC1 = m_dC1Laminar - ((m_dC1Diff * fReN) / (fReN + m_dReMidN));
-
-            // Determine the profile start point
-            if (nDirection == DIRECTION_DOWNCOAST)
-               nProfileStartPoint = nMaxConcavePoint + nProfileDist;
-            else
-               nProfileStartPoint = nMaxConcavePoint - nProfileDist;
-
-//            LogStream << m_ulTimestep << ": " << (nDirection == DIRECTION_DOWNCOAST ? "DOWN" : "UP") << "-coast, nProfileStartPoint = " << nProfileStartPoint << " nMaxConcavePoint = " << nMaxConcavePoint << endl;
-
-            // Now do the search
-            int n = 0;
-            while (n <= nSearchDist)
-            {
-               n++;
-
-               if (nDirection == DIRECTION_DOWNCOAST)
-                  nThisPoint = nMaxConcavePoint + n;
-               else
-                  nThisPoint = nMaxConcavePoint - n;
-
-               // Safety check
-               if ((nThisPoint < 0) || (nThisPoint > nCoastSize-1))
-                  break;
-
-//                LogStream << "nThisPoint = " << nThisPoint << endl;
-
-               // Have we already searched this point?
-               if (bVPointSearched[nThisPoint])
-               {
-//                   LogStream << "\tAlready searched with nThisPoint = " << nThisPoint << endl;
-
-                  break;
-               }
-
-               // No, so mark this point as searched
-               bVPointSearched[nThisPoint] = true;
-
-               if ((nThisPoint == 0) || (nThisPoint == nCoastSize-1))
-               {
-                  // We have hit the beginning or end of the coastline
-//                   LogStream << "\tHit beginning or end of coastline with nThisPoint = " << nThisPoint << endl;
-
-                  break;
-               }
-
-               if (m_VCoast[nCoast].bIsNormalProfileStartPoint(nThisPoint))
-               {
-                  // We have hit the start point of another profile
-//                   LogStream << "\tHit start of profile " << m_VCoast[nCoast].nGetProfileNumber(nThisPoint) << " at nThisPoint = " << nThisPoint << endl;
-
-                  break;
-               }
-
-               // Is this coastline point the correct distance from the max-concave point? If so, create a profile here. However if the coastline is too convex (a -ve number) then keep going
-               if (nThisPoint == nProfileStartPoint)
-               {
-//                  LogStream << "nThisPoint == nProfileStartPoint with nThisPoint = " << nThisPoint << endl;
-                  if (m_VCoast[nCoast].dGetCurvature(nThisPoint) <= dCoastProfileConvexityThreshold)
-                  {
-                     if (nDirection == DIRECTION_DOWNCOAST)
-                        nProfileStartPoint++;
-                     else
-                        nProfileStartPoint--;
-
-                     nSearchDist++;
-
-//                      LogStream << "\tExcessive convexity = " << m_VCoast[nCoast].dGetCurvature(nThisPoint) << " (convexity threshold = " << dCoastProfileConvexityThreshold << ") at nThisPoint = " << nThisPoint << " when attempting to create nProfile = " << nProfile+1 << ", possible nProfileStartPoint changed to " << nProfileStartPoint << endl;
-
-                  }
-                  else
-                  {
-                     int nRet = nCreateProfile(nCoast, nProfileStartPoint, nProfile);
-                     if (nRet != RTN_OK)
-                     {
-                        // Uh-oh, this profile is no good (has hit coast, or hit dry land, etc.) so forget about it
-                        if (nDirection == DIRECTION_DOWNCOAST)
-                           nProfileStartPoint++;
-                        else
-                           nProfileStartPoint--;
-
-                        nSearchDist++;
-
-//                         LogStream << "\tn = " << n << " profile " << nProfile+1 << " NOT created at nThisPoint = " << nThisPoint << endl;
-                     }
-//                      else
-//                      {
-//                         LogStream << "\tn = " << n << " profile " << nProfile << " created at nThisPoint = " << nThisPoint << " which has curvature = " << m_VCoast[nCoast].dGetCurvature(nThisPoint) << " (convexity threshold = " << dCoastProfileConvexityThreshold << "). Started from nMaxConcavePoint = " << nMaxConcavePoint << " which has curvature = " << m_VCoast[nCoast].dGetCurvature(nMaxConcavePoint) << endl;
-//                      }
                   }
                }
             }
-         }
-      }
-
+        
+ 
       // Did we fail to create any normal profiles? If so, quit
       if (nProfile < 0)
       {
-         string strErr = ERR + "timestep " + tToStr(m_ulTimestep) + ": could not create profiles for coastline " + tToStr(nCoast) ;
-         if (m_ulTimestep == 1)
-            strErr += ". Check the initial SWL";
+         string strErr = ERR + ": could not create profiles for coastline " + tToStr(nCoast) ;
+         strErr += ". Check the initial SWL";
          strErr += "\n";
-
          cerr << strErr;
          LogStream << strErr;
-
-        // return RTN_ERR_BADPROFILE;
+         // return RTN_ERR_BADPROFILE;
       }
 
-      // Finally, create 'special' profiles at the beginning and end of the coastline
-      //CreateGridEdgeProfile(true, nCoast, nProfile);
-      //CreateGridEdgeProfile(false, nCoast, nProfile);
-
-      // Create an index to the profiles in along-coast sequence
+     // Create an index to the profiles in along-coast sequence
       m_VCoast[nCoast].CreateAlongCoastlineProfileIndex();
 
-//       for (int n = 0; n < nCoastSize; n++)
-//       {
-//          LogStream << n;
-//          if (m_VCoast[nCoast].bIsNormalProfileStartPoint(n))
-//             LogStream << " profile " << m_VCoast[nCoast].nGetProfileNumber(n);
-//          LogStream << endl;
-//       }
-//       LogStream << endl;
    }
 
    return RTN_OK;

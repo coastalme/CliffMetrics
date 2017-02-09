@@ -136,9 +136,6 @@ void CDelineation::WriteStartRunDetails(void)
       if (m_nCoastSmooth == SMOOTH_SAVITZKY_GOLAY)
          OutStream << " Savitzky-Golay coastline smoothing polynomial order       \t: " << m_nSavGolCoastPoly << endl;
    }
-   OutStream << " Size of profile slope smoothing window                    \t: " << m_nProfileSmoothWindow << endl;
-   OutStream << endl;
-
 
    // --------------------------------------------------- Raster GIS stuff -------------------------------------------------------
    OutStream << "Raster GIS Input Files" << endl;
@@ -183,10 +180,7 @@ void CDelineation::WriteStartRunDetails(void)
    OutStream << "Other Input Data" << endl;
 
    OutStream << " Still water level used to extract shoreline               \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << setprecision(1) << m_dStillWaterLevel << " m" << endl;
-   OutStream << " Minimum spacing of coastline normals                      \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << m_dCoastNormalAvgSpacing << " m" << endl;
-   OutStream << " Random factor for spacing of normals                      \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << m_dCoastNormalRandSpaceFact << endl;
    OutStream << " Length of coastline normals                               \t: " << m_dCoastNormalLength << " m" << endl;
-   OutStream << " Maximum number of 'cape' normals                          \t: " << m_nCapeNormals << endl;
    OutStream << " Vertical tolerance avoid false CliffTops/Toes             \t: " << resetiosflags(ios::floatfield) << setiosflags(ios::fixed) << setprecision(3) << m_dEleTolerance << " m" << endl;
    OutStream << endl;
    OutStream << endl << endl;
@@ -221,8 +215,8 @@ bool CDelineation::bWriteProfileData(int const nCoast, int const nProfile, int c
    strFName.append("coast_");
    strFName.append(NumberToString(nCoast));
    strFName.append("_profile_");
-   char szNumTmp1[5] = "";
-   pszLongToSz(nProfile, szNumTmp1, 5);          // Pad with zeros
+   char szNumTmp1[7] = "";
+   pszLongToSz(nProfile, szNumTmp1, 7);          // Pad with zeros
    strFName.append(pszTrimLeft(szNumTmp1));
    strFName.append("_");
    strFName.append(m_strRunName);

@@ -451,54 +451,15 @@ bool CDelineation::bReadRunData(void)
                   m_ulRandSeed[n] = m_ulRandSeed[n-1];
             }
             break;
-	    
+
          case 14:
-            // Spacing of coastline normals (m)
-            m_dCoastNormalAvgSpacing = atof(strRH.c_str());
-            if (m_dCoastNormalAvgSpacing == 0)
-               m_nCoastNormalAvgSpacing = MIN_PROFILE_SPACING;    // In cells, we will set m_dCoastNormalAvgSpacing later when we know m_dCellSide
-            else if (m_dCoastNormalAvgSpacing < 0)
-               strErr = "spacing of coastline normals must be greater than zero";
-            break;
-
-         case 15:
-            // Random factor for spacing of normals  [0 to 1, 0 = deterministic]
-            m_dCoastNormalRandSpaceFact = atof(strRH.c_str());
-            if (m_dCoastNormalRandSpaceFact < 0)
-               strErr = "spacing of coastline normals must be greater than zero";
-            else if (m_dCoastNormalRandSpaceFact > 1)
-               strErr = "spacing of coastline normals must be less than one";
-            break;
-
-         case 16:
             // Length of coastline normals (m)
             m_dCoastNormalLength = atof(strRH.c_str());
             if (m_dCoastNormalLength <= 0)
                strErr = "length of coastline normals must be greater than zero";
             break;
 
-         case 17:
-            // Maximum number of 'cape' normals
-            m_nCapeNormals = atoi(strRH.c_str());
-            if (m_nCapeNormals <= 0)
-               strErr = "number of 'cape' normals must be zero or greater";
-            break;
-
-         case 18:
-            // Profile slope running-mean smoothing window size: must be odd
-            m_nProfileSmoothWindow = atoi(strRH.c_str());
-            if ((m_nProfileSmoothWindow <= 0) || !(m_nProfileSmoothWindow % 2))
-               strErr = "size of profile vector smoothing window (must be > 0 and odd)";
-            break;
-
-         case 19:
-            // Max local slope (m/m)
-            m_dProfileMaxSlope = atof(strRH.c_str());
-            if (m_dProfileMaxSlope <= 0)
-               strErr = "max local slope must be greater than zero";
-            break;
-	    
-         case 20:
+         case 15:
             // Vertical tolerance avoid false CliffTops/Toes
              m_dEleTolerance = atof(strRH.c_str());
             if (m_dEleTolerance <= 0)
