@@ -148,8 +148,9 @@ int CDelineation::nCreateAllProfiles(void)
 
       // Create a maximum of m_nCapeNormals profiles at capes i.e. points on the coastline at which convexity is a maximum
       bool bFindCape = true;
-      double dCapeCurvatureThreshold = prVCurvature[nCoastSize - m_nCapeNormals - 1].second;
-
+      //double dCapeCurvatureThreshold = prVCurvature[nCoastSize - m_nCapeNormals - 1].second;
+      double dCapeCurvatureThreshold = prVCurvature[0].second;
+      
       while (true)
       {
          // How many coastline points are still to be searched?
@@ -342,7 +343,7 @@ int CDelineation::nCreateAllProfiles(void)
          cerr << strErr;
          LogStream << strErr;
 
-         return RTN_ERR_BADPROFILE;
+        // return RTN_ERR_BADPROFILE;
       }
 
       // Finally, create 'special' profiles at the beginning and end of the coastline

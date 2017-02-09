@@ -249,11 +249,11 @@ int CDelineation::nDoDelineation(int nArg, char* pcArgv[])
       // The user specified a profile spacing, is this too small?
       m_nCoastNormalAvgSpacing = m_dCoastNormalAvgSpacing / m_dCellSide;
 
-      if (m_nCoastNormalAvgSpacing < MIN_PROFILE_SPACING)
-      {
-         cerr << ERR << "polygon creation works poorly if profile spacing is less than " << MIN_PROFILE_SPACING << " x the size of raster cells" << endl;
-         return RTN_ERR_PROFILESPACING;
-      }
+     //if (m_nCoastNormalAvgSpacing < m_dCellSide)
+     //{
+     //    cerr << ERR << "polygon creation works poorly if profile spacing is less than " << m_dCellSide << " x the size of raster cells" << endl;
+         //return RTN_ERR_PROFILESPACING;
+     //}
    }
 
    // May wish to read in the shoreline vector file instead of calculating it from the raster

@@ -30,7 +30,7 @@ set(FIND_LIBRARY_USE_LIB64_PATHS true)
 project(CLIFF)
 file(GLOB CLIFF_SOURCE_FILES *.cpp)
 set(CLIFF_EXECUTABLE cliff)
-set(CLIFF_INSTALL_DIR "$ENV{HOME}/projects/CliffMetrics")                # May be changed by the user
+set(CLIFF_INSTALL_DIR "$ENV{HOME}/Projects/CliffMetrics")                # May be changed by the user
 
 if(NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE Debug)                                 # If not specified, assume a Debug build
