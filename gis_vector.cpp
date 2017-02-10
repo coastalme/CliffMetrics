@@ -393,7 +393,7 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
          else if (nDataItem == PLOT_CLIFF_TOE)
             strFieldValue4 = "CliffToeEl";
 	 else if (nDataItem == PLOT_COAST_POINT)
-            strFieldValue4 = "CliffToeEl";
+            strFieldValue4 = "	CoastEl";
 	 
          OGRFieldDefn OGRField4(strFieldValue4.c_str(), OFTReal);
 	 OGRFieldDefn OGRField5(strFieldValue5.c_str(), OFTReal);

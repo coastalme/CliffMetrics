@@ -864,7 +864,7 @@ int CDelineation::nPutAllProfilesOntoGrid(void)
 
          //if ((! bTruncated) && (! bTooShort) && (! bHitCoast)  && (! bHitAnotherProfile))
 	 //if ( (! bTooShort) && (! bHitAnotherProfile))
-	 if ( (! bTooShort) && (! bHitCoast))
+	 if ( (! bTooShort))
          {
             // This profile is fine
             nValidProfiles++;

@@ -60,14 +60,15 @@ int CDelineation::nLocateCliffTop(void)
 	 // Get the number of the coastline-normal profile
 	 CProfile* const pProfile = m_VCoast[nCoast].pGetProfile(nProfile);
 	 
+	 // Get the length of the profile (in cells) and the index of the coast point at which this profile starts
+         int const  nProfSize = pProfile->nGetNumCellsInProfile();
+	 if (nProfSize < 3) pProfile->SetTooShort(true);
+	 
 	 // Only work on this profile if it is problem-free 
         if (pProfile->bOKIncStartAndEndOfCoast())
 	{  
-         // Get the length of the profile (in cells) and the index of the coast point at which this profile starts
-         int const  nProfSize = pProfile->nGetNumCellsInProfile();
-	 
-	 //nCoastPoint = pProfile->nGetNumCoastPoint();
-	 
+	// cout << "nProfSize, m_bTooShort: " << nProfSize << ", " << pProfile->bTooShort() << endl;
+
 	 // Calculate the length of the profile in external CRS units
          int const nSegments = pProfile->nGetProfileSize()-1;
          double dProfileLenXY = 0;

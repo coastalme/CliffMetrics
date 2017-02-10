@@ -152,19 +152,7 @@ bool CProfile::bOKIncStartAndEndOfCoast(void) const
    return false;
 }
 
-bool CProfile::bOKIncStartOfCoast(void) const
-{
-   // All profiles without problems, including start-of-coast profile (but not end-of-coast profile)
-   if ((! m_bEndOfCoast) &&
-       (! m_bHitLand)    &&
-       //(! m_bHitCoast)   &&
-       (! m_bTooShort)   &&
-       //(! m_bTruncated)  &&
-       (! m_bHitAnotherProfile))
-      return true;
 
-   return false;
-}
 
 
 void CProfile::SetAllPointsInProfile(vector<C2DPoint>* VNewPoints)
