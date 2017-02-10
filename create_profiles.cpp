@@ -863,7 +863,8 @@ int CDelineation::nPutAllProfilesOntoGrid(void)
          RasterizeProfile(nCoast, nProfile, &VCellsToMark, &bVShared, bTooShort, bTruncated, bHitCoast, bHitAnotherProfile);
 
          //if ((! bTruncated) && (! bTooShort) && (! bHitCoast)  && (! bHitAnotherProfile))
-	 if ( (! bTooShort) && (! bHitAnotherProfile))
+	 //if ( (! bTooShort) && (! bHitAnotherProfile))
+	 if ( (! bTooShort) && (! bHitCoast))
          {
             // This profile is fine
             nValidProfiles++;

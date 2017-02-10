@@ -494,7 +494,7 @@ string const   VECTOR_CLIFF_TOP_CODE                        = "cliff_top";
 string const   VECTOR_CLIFF_TOP_NAME                        = "cliff_top";
 string const   VECTOR_CLIFF_TOE_CODE                        = "cliff_toe";
 string const   VECTOR_CLIFF_TOE_NAME                        = "cliff_toe";
-
+string const   VECTOR_COAST_POINT_NAME                      = "coast_point";
 
 // GIS vector output codes and titles
 int const      PLOT_COAST                                   = 1;
@@ -525,7 +525,8 @@ int const      PLOT_CLIFF_TOP                               = 13;
 string const   PLOT_CLIFF_TOP_TITLE                         = "Cliff top points";
 int const      PLOT_CLIFF_TOE                               = 14;
 string const   PLOT_CLIFF_TOE_TITLE                         = "Cliff toe points";
-
+int const      PLOT_COAST_POINT                             = 15;
+string const   PLOT_COAST_POINT_TITLE                       = "Coast points";
 
 // Time series codes
 string const   SEAAREATSNAME                       = "sea_area";

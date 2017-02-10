@@ -676,6 +676,9 @@ bool CDelineation::bSaveAllVectorGISFiles(void)
    if (! bWriteVectorGIS(PLOT_CLIFF_TOE, &PLOT_CLIFF_TOE_TITLE))
       return false;
 
+   if (! bWriteVectorGIS(PLOT_COAST_POINT, &PLOT_COAST_POINT_TITLE))
+      return false;
+
    // These are optional (see delineation constructor)
    if (m_bInvalidNormalsSave)
    {

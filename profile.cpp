@@ -144,9 +144,9 @@ bool CProfile::bOKIncStartAndEndOfCoast(void) const
    // All profiles without problems, including start- and end-of-coast profiles
    if ((! m_bHitLand)    &&
        //(! m_bHitCoast)   &&
-       (! m_bTooShort)   &&
+       (! m_bTooShort)) //  &&
        //(! m_bTruncated)  &&
-       (! m_bHitAnotherProfile))
+       //(! m_bHitAnotherProfile))
       return true;
 
    return false;

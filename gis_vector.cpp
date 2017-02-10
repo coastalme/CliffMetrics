@@ -83,6 +83,12 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
          strFilePathName.append(VECTOR_CLIFF_TOE_NAME);
          break;
       }
+      
+      case (PLOT_COAST_POINT):
+      {
+         strFilePathName.append(VECTOR_COAST_POINT_NAME);
+         break;
+      }
    }
 
    // Append the 'RunName' to the filename
@@ -350,6 +356,7 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
       }
       case (PLOT_CLIFF_TOP):
       case (PLOT_CLIFF_TOE):
+      case (PLOT_COAST_POINT):
       {
          eGType = wkbPoint;
          strType = "point";
@@ -385,7 +392,9 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
             strFieldValue4 = "CliffTopEl";
          else if (nDataItem == PLOT_CLIFF_TOE)
             strFieldValue4 = "CliffToeEl";
-                     
+	 else if (nDataItem == PLOT_COAST_POINT)
+            strFieldValue4 = "CliffToeEl";
+	 
          OGRFieldDefn OGRField4(strFieldValue4.c_str(), OFTReal);
 	 OGRFieldDefn OGRField5(strFieldValue5.c_str(), OFTReal);
             
@@ -456,6 +465,17 @@ bool CDelineation::bWriteVectorGIS(int const nDataItem, string const* strPlotTit
 		     isQualityOK = 0;
                   }
                   
+                  else if (nDataItem == PLOT_COAST_POINT)  
+                  {
+                  dChainage	  = 0;
+                  nX = pProfile->pPtiVGetCellsInProfile()->at(0).nGetX();
+                  nY = pProfile->pPtiVGetCellsInProfile()->at(0).nGetY();
+                  dX = dGridCentroidXToExtCRSX(pProfile->pPtiVGetCellsInProfile()->at(0).nGetX());
+                  dY = dGridCentroidYToExtCRSY(pProfile->pPtiVGetCellsInProfile()->at(0).nGetY());
+		  isQualityOK = 1; // to do, sanity check for coastline points
+		  
+                  }
+
                   OGRPt.setX(dX);
                   OGRPt.setY(dY);
                   pOGRFeature->SetGeometry(&OGRPt);
