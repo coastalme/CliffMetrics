@@ -1,5 +1,5 @@
 # cliffmetrics
-CliffMetrics (Automatic Cliff Metrics delineation) delineates the location of the coastline, coastline normals, and cliff metrics along these normals.
+CliffMetrics (Automatic Cliff Metrics delineation) delineates the location of the coastline, coastline normals, and cliff top and toe location along these normals.
 
 By Andres Payo, David Favis-Mortlock, Martin Hurst, Monica Palaseanu-Lovejoy
 
