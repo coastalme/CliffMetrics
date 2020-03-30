@@ -1,0 +1,55 @@
+;======================================================================================================================
+;
+; Data file for ICM
+;
+; Copyright (C) 2015 David Favis-Mortlock, Andres Payo, and Jim Hall
+;
+;=====================================================================================================================
+;
+; This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+; License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later
+; version.
+;
+; This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+; warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+;
+; You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
+; Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+;
+;======================================================================================================================
+;
+; SIMPLE TEST DATA
+;
+; Run information -----------------------------------------------------------------------------------------------------
+1 Main output/log file names                        [omit path and extension]: simple
+2 DTM file  (DTM MUST BE PRESENT)                             [path and name]: in/simple_fast/two_bays.asc; in/simple_fast/basement.asc
+3 Still water level (m)  used to find the shoreline                          : 89       ; use 165 with all consolidated layers
+4 Coastline smoothing              [0=none, 1=running mean, 2=Savitsky-Golay]: 1
+5 Coastline smoothing window size                               [must be odd]: 11                        ; was 55 for S-G
+6 Polynomial order for Savitsky-Golay coastline smoothing            [2 or 4]: 4
+
+; If user wants to use a given shoreline vector instead of extracting it from the DTM 
+7 Shoreline shape file (OPTIONAL GIS FILES)                   [path and name]:
+
+; Advance Run information -----------------------------------------------------------------------------------------------------
+8 GIS raster files to output                                  [see codes.txt]: all
+9 GIS raster output format                          [blank=same as DEM input]: gtiff                    ; gdal-config --formats for others
+10   If needed, also output GIS raster world file?                      [y/n]: y
+11   If needed, scale GIS raster output values?                         [y/n]: y
+12 GIS vector files to output                                 [see codes.txt]: all
+13 GIS vector output format                                                  : ESRI Shapefile           ; ogrinfo --formats for others
+
+14 Random edge for coastline search?                                    [y/n]: n
+15 Random number seed(s)                                                     : 280761
+
+16 Spacing of coastline normals (m)                     [0 = default minimum]: 0
+17 Random factor for spacing of normals           [0 to 1, 0 = deterministic]: 0.3
+18 Length of coastline normals (m)                                           : 140       ; was 80
+19 Maximum number of 'cape' normals                                          : 6
+
+20 Profile slope running-mean smoothing window size             [must be odd]: 5                        ; was 11 33
+21 Max local slope (m/m)                                                     : 1.18
+
+22 Save profile data?                                                        : n
+23 Profile number(s) to save                                                 : 4 12 20 21
+; END OF FILE ----------------------------------------------------------------------------------------------------------
