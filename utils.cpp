@@ -360,13 +360,17 @@ void CDelineation::AnnounceAllocateMemory(void)
 
 /*==============================================================================================================================
 
- Now reading vector GIS files
+ Tell the user that we are now reading the user defined Coastline
 
 ==============================================================================================================================*/
-// void CDelineation::AnnounceReadVectorFiles(void)
-// {
-//    cout << READVECTORFILES << endl;
-// }
+ void CDelineation::AnnounceReadUserCoastLine(void)
+ {
+#ifdef _WIN32
+   cout << READVECTORFILES << pstrChangeToForwardSlash(&m_strIDTMFile) << endl;
+#else
+   cout << READVECTORFILES << m_strInitialCoastlineFile << endl;
+#endif
+ }
 
 
 
@@ -472,115 +476,6 @@ string CDelineation::strListVectorFiles(void) const
 }
 
 
-
-/*==============================================================================================================================
-
- Update and print grand totals at the end of each timestep
-
-==============================================================================================================================*/
-void CDelineation::UpdateGrandTotals(void)
-{
-   LogStream << endl << "TOTALS FOR ITERATION " << m_ulTimestep << " ===============================================================" << endl;
-   LogStream << "Potential platform erosion = " << m_dThisTimestepPotentialPlatformErosion << endl;
-
-   LogStream << "Actual fine platform erosion = " << m_dThisTimestepActualFinePlatformErosion << endl;
-   LogStream << "Actual sand platform erosion = " << m_dThisTimestepActualSandPlatformErosion << endl;
-   LogStream << "Actual coarse platform erosion = " << m_dThisTimestepActualCoarsePlatformErosion << endl;
-
-   // Cliff collapse
-   LogStream << "Cliff collapse fine = " << m_dThisTimestepCliffCollapseFine << endl;
-   LogStream << "Cliff collapse sand = " << m_dThisTimestepCliffCollapseSand << endl;
-   LogStream << "Cliff collapse coarse = " << m_dThisTimestepCliffCollapseCoarse << endl;
-
-   // Cliff collapse talus deposition
-   LogStream << "Cliff collapse sand talus deposition = " << m_dThisTimestepCliffTalusSandDeposition << endl;
-   LogStream << "Cliff collapse coarse talus deposition = " << m_dThisTimestepCliffTalusCoarseDeposition << endl;
-
-   // Cliff collapse talus erosion
-   LogStream << "Cliff collapse fine talus erosion = " << m_dThisTimestepCliffTalusFineErosion << endl;
-   LogStream << "Cliff collapse sand talus erosion = " << m_dThisTimestepCliffTalusSandErosion << endl;
-   LogStream << "Cliff collapse coarse talus erosion = " <<    m_dThisTimestepCliffTalusCoarseErosion << endl;
-
-   // Beach erosion
-   LogStream << "Potential beach erosion = " << m_dThisTimestepPotentialBeachErosion << endl;
-
-   LogStream << "Actual fine beach erosion = " << m_dThisTimestepActualFineBeachErosion << endl;
-   LogStream << "Actual sand beach erosion = " << m_dThisTimestepActualSandBeachErosion << endl;
-   LogStream << "Actual coarse beach erosion = " << m_dThisTimestepActualCoarseBeachErosion << endl;
-
-   // Beach deposition
-   LogStream << "Sand beach deposition = " << m_dThisTimestepSandBeachDeposition << endl;
-   LogStream << "Coarse beach deposition = " << m_dThisTimestepCoarseBeachDeposition << endl;
-
-   // Sediment lost due to beach erosion
-   LogStream << "Off-grid potential beach erosion = " << m_dThisTimestepPotentialSedLostBeachErosion << endl;
-
-   LogStream << "Off-grid actual fine beach erosion = " << m_dThisTimestepActualFineSedLostBeachErosion << endl;
-   LogStream << "Off-grid actual sand beach erosion = " << m_dThisTimestepActualSandSedLostBeachErosion << endl;
-   LogStream << "Off-grid actual coarse beach erosion = " << m_dThisTimestepActualCoarseSedLostBeachErosion << endl;
-
-   // Sediment lost due to cliff collapse
-   LogStream << "Off-grid sand cliff collapse = " << m_dThisTimestepSandSedLostCliffCollapse << endl;
-   LogStream << "Off-grid coarse cliff collapse = " << m_dThisTimestepCoarseSedLostCliffCollapse << endl;
-
-   // Suspended sediment
-   LogStream << "Suspended sediment = " << m_dThisTimestepFineSedimentToSuspension << endl << endl;
-
-   // Any errors?
-   LogStream << "Erosion errors = " << m_dThisTimestepMassBalanceErosionError << endl;
-   LogStream << "Deposition errors = " << m_dThisTimestepMassBalanceDepositionError << endl << endl;
-
-
-   // Platform erosion
-   m_ldGTotPotentialPlatformErosion        += m_dThisTimestepPotentialPlatformErosion;
-
-   m_ldGTotFineActualPlatformErosion       += m_dThisTimestepActualFinePlatformErosion;
-   m_ldGTotSandActualPlatformErosion       += m_dThisTimestepActualSandPlatformErosion;
-   m_ldGTotCoarseActualPlatformErosion     += m_dThisTimestepActualCoarsePlatformErosion;
-
-   // Cliff collapse
-   m_ldGTotCliffCollapseFine               += m_dThisTimestepCliffCollapseFine;
-   m_ldGTotCliffCollapseSand               += m_dThisTimestepCliffCollapseSand;
-   m_ldGTotCliffCollapseCoarse             += m_dThisTimestepCliffCollapseCoarse;
-
-   // Cliff collapse talus deposition
-   m_ldGTotCliffTalusSandDeposition        += m_dThisTimestepCliffTalusSandDeposition;
-   m_ldGTotCliffTalusCoarseDeposition      += m_dThisTimestepCliffTalusCoarseDeposition;
-
-   // Cliff collapse talus erosion
-   m_ldGTotCliffTalusFineErosion           += m_dThisTimestepCliffTalusFineErosion;
-   m_ldGTotCliffTalusSandErosion           += m_dThisTimestepCliffTalusSandErosion;
-   m_ldGTotCliffTalusCoarseErosion         += m_dThisTimestepCliffTalusCoarseErosion;
-
-   // Beach erosion
-   m_ldGTotPotentialBeachErosion           += m_dThisTimestepPotentialBeachErosion;
-
-   m_ldGTotActualFineBeachErosion          += m_dThisTimestepActualFineBeachErosion;
-   m_ldGTotActualSandBeachErosion          += m_dThisTimestepActualSandBeachErosion;
-   m_ldGTotActualCoarseBeachErosion        += m_dThisTimestepActualCoarseBeachErosion;
-
-   // Beach deposition
-   m_ldGTotSandBeachDeposition             += m_dThisTimestepSandBeachDeposition;
-   m_ldGTotCoarseBeachDeposition           += m_dThisTimestepCoarseBeachDeposition;
-
-   // Sediment lost due to beach erosion
-   m_ldGTotPotentialSedLostBeachErosion    += m_dThisTimestepPotentialSedLostBeachErosion;
-
-   m_ldGTotActualFineSedLostBeachErosion   += m_dThisTimestepActualFineSedLostBeachErosion;
-   m_ldGTotActualSandSedLostBeachErosion   += m_dThisTimestepActualSandSedLostBeachErosion;
-   m_ldGTotActualCoarseSedLostBeachErosion += m_dThisTimestepActualCoarseSedLostBeachErosion;
-
-   // Sediment lost due to cliff collapse
-   m_ldGTotSandSedLostCliffCollapse        += m_dThisTimestepSandSedLostCliffCollapse;
-   m_ldGTotCoarseSedLostCliffCollapse      += m_dThisTimestepCoarseSedLostCliffCollapse;
-
-   // Suspended sediment
-   m_ldGTotSuspendedSediment               += m_dThisTimestepFineSedimentToSuspension;
-
-   // Errors
-   m_ldGTotMassBalanceErosionError         += m_dThisTimestepMassBalanceErosionError;
-   m_ldGTotMassBalanceDepositionError      += m_dThisTimestepMassBalanceDepositionError;
-}
 
 /*==============================================================================================================================
 
@@ -718,28 +613,6 @@ void CDelineation::CalcTime(double const dRunLength)
    OutStream << "Run time elapsed: " << strDispTime(dDuration, false, false);
    LogStream << "Run time elapsed: " << strDispTime(dDuration, false, false);
 
-   // Calculate run time per timestep
-   double fPerTimestep = dDuration / m_ulTotTimestep;
-
-   // And write run time per timestep to OutStream and LogStream
-   OutStream << resetiosflags(ios::floatfield);
-   OutStream << " (" << setiosflags(ios::fixed) << setprecision(4) << fPerTimestep << " per timestep)" << endl;
-   LogStream << resetiosflags(ios::floatfield);
-   LogStream << " (" << setiosflags(ios::fixed) << setprecision(4) << fPerTimestep << " per timestep)" << endl;
-
-   // Calculate ratio of run time to time simulated
-   OutStream << "In terms of run time, this is ";
-   LogStream << "In terms of run time, this is ";
-   if (dDuration > dRunLength)
-   {
-      OutStream << setiosflags(ios::fixed) << setprecision(3) << dDuration / dRunLength << " x slower than reality" << endl;
-      LogStream << setiosflags(ios::fixed) << setprecision(3) << dDuration / dRunLength << " x slower than reality" << endl;
-   }
-   else
-   {
-      OutStream << setiosflags(ios::fixed) << setprecision(3) << dRunLength / dDuration << " x faster than reality" << endl;
-      LogStream << setiosflags(ios::fixed) << setprecision(3) << dRunLength / dDuration << " x faster than reality" << endl;
-   }
 }
 
 /*==============================================================================================================================

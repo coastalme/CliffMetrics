@@ -169,9 +169,9 @@ void CDelineation::WriteStartRunDetails(void)
    {
       OutStream << " Initial Coastline file                                    \t: " << m_strInitialCoastlineFile << endl;
       OutStream << " OGR Initial Coastline file driver code                    \t: " << m_strOGRICDriverCode << endl;
-      OutStream << " OGR Initial Coastline file data type                      \t: " << m_strOGRICDataType << endl;
-      OutStream << " OGR Initial Coastline file data value                     \t: " << m_strOGRICDataValue << endl;
-      OutStream << " OGR Initial Coastline file geometry                       \t: " << m_strOGRICGeometry << endl;
+     // OutStream << " OGR Initial Coastline file data type                      \t: " << m_strOGRICDataType << endl;
+     // OutStream << " OGR Initial Coastline file data value                     \t: " << m_strOGRICDataValue << endl;
+     // OutStream << " OGR Initial Coastline file geometry                       \t: " << m_strOGRICGeometry << endl;
       OutStream << endl;
    }
    OutStream << endl;

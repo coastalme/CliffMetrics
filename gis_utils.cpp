@@ -704,8 +704,7 @@ bool CDelineation::bSaveAllVectorGISFiles(void)
 void CDelineation::GetRasterOutputMinMax(int const nDataItem, double& dMin, double& dMax)
 {
    // If this is a binary mask layer, we already know the max and min values
-   if ((nDataItem == PLOT_POTENTIAL_PLATFORM_EROSION_MASK) ||
-       (nDataItem == PLOT_RASTER_COAST) ||
+   if ((nDataItem == PLOT_RASTER_COAST) ||
        (nDataItem == PLOT_RASTER_NORMAL))
        
    {

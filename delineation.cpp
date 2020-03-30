@@ -3,11 +3,8 @@
  * \file delineation.cpp
  * \brief The start-of-simulation routine
  * \details TODO A more detailed description of this routine.
- * \author Andres Payo 
- * \author David Favis-Mortlock
- * \author Martin Husrt
- * \author Monica Palaseanu-Lovejoy
- * \date 2017
+ * \author Andres Payo, David Favis-Mortlock, Martin Husrt, Monica Palaseanu-Lovejoy
+ * \date 2020
  * \copyright GNU General Public License
  *
  */
@@ -94,8 +91,6 @@ CDelineation::CDelineation(void)
    for (int i = 0; i < NRNG; i++)
       m_ulRandSeed[i]  = 0;
 
-   for (int i = 0; i < SAVEMAX; i++)
-      m_dUSaveTime[i] = 0;
 
    m_dEleTolerance                              = 1e-16;  // must be larger than zero, so it is initialized with a very small value but still larger than 0
    m_dNorthWestXExtCRS                          =
@@ -111,17 +106,10 @@ CDelineation::CDelineation(void)
    m_dClkLast                                   =
    m_dCPUClock                                  =
    m_dStillWaterLevel                           =
-   m_dOrigSWL                                   =
-   m_dFinalSWL                                  =
-   m_dC_0                                       =
-   m_dL_0                                       =
-   m_dR                                         =
-   m_dG                                         =
    m_dCoastNormalAvgSpacing                     =
    m_dCoastNormalLength                         =
    m_dProfileMaxSlope                           =
-   m_dSimpleSmoothWeight                        =
-   m_dCoastNormalRandSpaceFact                  = 0;
+   m_dSimpleSmoothWeight                        = 0;
 
    m_dMinSWL                                    = DBL_MAX;
    m_dMaxSWL                                    = DBL_MIN;
@@ -257,20 +245,19 @@ int CDelineation::nDoDelineation(int nArg, char* pcArgv[])
    }
 
    // May wish to read in the shoreline vector file instead of calculating it from the raster
-/*   AnnounceReadVectorFiles();
    if (! m_strInitialCoastlineFile.empty())
    {
-      AnnounceReadInitialCoastlineGIS();
+      AnnounceReadUserCoastLine();
 
       // Create a new coastline object
       CCoast CoastTmp;
       m_VCoast.push_back(CoastTmp);
 
-      // Read in
-      nRet = nReadVectorGISData(COAST_VEC);
+      // Read in the points of user defined coastline
+      nRet = nReadVectorCoastlineData();
       if (nRet != RTN_OK)
          return (nRet);
-   }*/
+   }
 
 
    // Open OUT file

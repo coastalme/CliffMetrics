@@ -4,7 +4,7 @@
  * \brief This class runs CliffMetrics simulations
  * \details TODO This is a more detailed description of the CDelineation class
  * \author Andres Payo, David Favis-Mortlock, Martin Husrt, Monica Palaseanu-Lovejoy
- * \date 2017
+ * \date 2020
  * \copyright GNU General Public License
  *
  * \file delineation.h
@@ -88,7 +88,8 @@ private:
       m_nUSave,
       m_nThisSave,
       m_nCoastMax,
-      m_nCoastMin;
+      m_nCoastMin,
+      m_nCoastSeaHandiness;
    
    GDALDataType
       m_GDALWriteIntDataType,
@@ -119,120 +120,18 @@ private:
       m_dCellDiagonal,                 // Length of cell's diagonal (in external CRS units)
       m_dInvCellSide,                  // Inverse of m_dCellSide
       m_dInvCellDiagonal,              // Inverse of m_dCellDiagonal
-      m_dSimDuration,                  // Duration of simulation, in hours
-      m_dUSaveTime[SAVEMAX],
       m_dClkLast,                      // Last value returned by clock()
       m_dCPUClock,                     // Total elapsed CPU time
       m_dGeoTransform[6],
-      m_dSeaWaterDensity,
-      m_dOrigSWL,
-      m_dFinalSWL,
-      m_dDeltaSWLPerTimestep,
       m_dStillWaterLevel,
       m_dMinSWL,
       m_dMaxSWL,
-      m_dBreakingWaveHeight,
-      m_dWavePeriod,
-      m_dC_0,                          // Deep water wave speed (m/s)
-      m_dL_0,                          // Deep water wave length (m)
-      m_dWaveDepthRatioForWaveCalcs,
-      m_dDeepWaterWaveHeight,
-      m_dDeepWaterWaveOrientation,
-      m_dR,
-      m_dD50Fine,
-      m_dD50Sand,
-      m_dD50Coarse,
-      m_dBeachSedimentDensity,
-      m_dBeachSedimentPorosity,
-      m_dFineErodibility,
-      m_dSandErodibility,
-      m_dCoarseErodibility,
-      m_dFineErodibilityNormalized,
-      m_dSandErodibilityNormalized,
-      m_dCoarseErodibilityNormalized,
-      m_dKLS,
-      m_dKamphuis,
-      m_dG,
-      m_dInmersedToBulkVolumetric,
-      m_dDepthOfClosure,
       m_dCoastNormalAvgSpacing,        // In m
       m_dCoastNormalLength,
-      m_dThisTimestepTotSeaDepth,
-      m_dThisTimestepPotentialPlatformErosion,
-      m_dThisTimestepActualFinePlatformErosion,
-      m_dThisTimestepActualSandPlatformErosion,
-      m_dThisTimestepActualCoarsePlatformErosion,
-      m_dThisTimestepPotentialBeachErosion,
-      m_dThisTimestepActualFineBeachErosion,
-      m_dThisTimestepActualSandBeachErosion,
-      m_dThisTimestepActualCoarseBeachErosion,
-      m_dThisTimestepSandBeachDeposition,
-      m_dThisTimestepCoarseBeachDeposition,
-      m_dThisTimestepFineSedimentToSuspension,
-      m_dThisTimestepPotentialSedLostBeachErosion,
-      m_dThisTimestepActualFineSedLostBeachErosion,
-      m_dThisTimestepActualSandSedLostBeachErosion,
-      m_dThisTimestepActualCoarseSedLostBeachErosion,
-      m_dThisTimestepEstimatedActualFineBeachErosion,
-      m_dThisTimestepEstimatedActualSandBeachErosion,
-      m_dThisTimestepEstimatedActualCoarseBeachErosion,
-      m_dThisTimestepCliffTalusFineErosion,
-      m_dThisTimestepCliffTalusSandErosion,
-      m_dThisTimestepCliffTalusCoarseErosion,
-      m_dThisTimestepSandSedLostCliffCollapse,
-      m_dThisTimestepCoarseSedLostCliffCollapse,
-      m_dThisTimestepMassBalanceErosionError,
-      m_dThisTimestepMassBalanceDepositionError,
-      m_dDepthOverDBMax,                                    // Used in erosion potential look-up function
-      m_dTotPotErosionOnProfiles,
-      m_dTotPotErosionBetweenProfiles,
       m_dProfileMaxSlope,
-      m_dSimpleSmoothWeight,
-      m_dBeachSmoothingVertTolerance,
-      m_dCliffErodibility,
-      m_dNotchOverhangAtCollapse,
-      m_dNotchBaseBelowSWL,
-      m_dCliffDepositionA,
-      m_dCliffDepositionPlanviewLength,
-      m_dCliffDepositionHeightFrac,
-      m_dThisTimestepCliffCollapseFine,
-      m_dThisTimestepCliffCollapseSand,
-      m_dThisTimestepCliffCollapseCoarse,
-      m_dThisTimestepCliffTalusSandDeposition,
-      m_dThisTimestepCliffTalusCoarseDeposition,
-      m_dCoastNormalRandSpaceFact,
-      m_dDeanProfileStartAboveSWL;
-
+      m_dSimpleSmoothWeight;
+  
    // These grand totals are all long doubles, the aim is to minimize rounding errors when many very small numbers are added to a single much larger number, see e.g. http://www.ddj.com/cpp/184403224
-   long double
-      m_ldGTotPotentialPlatformErosion,
-      m_ldGTotFineActualPlatformErosion,
-      m_ldGTotSandActualPlatformErosion,
-      m_ldGTotCoarseActualPlatformErosion,
-      m_ldGTotPotentialSedLostBeachErosion,
-      m_ldGTotActualFineSedLostBeachErosion,
-      m_ldGTotActualSandSedLostBeachErosion,
-      m_ldGTotActualCoarseSedLostBeachErosion,
-      m_ldGTotSandSedLostCliffCollapse,
-      m_ldGTotCoarseSedLostCliffCollapse,
-      m_ldGTotCliffCollapseFine,
-      m_ldGTotCliffCollapseSand,
-      m_ldGTotCliffCollapseCoarse,
-      m_ldGTotCliffTalusSandDeposition,
-      m_ldGTotCliffTalusCoarseDeposition,
-      m_ldGTotCliffTalusFineErosion,
-      m_ldGTotCliffTalusSandErosion,
-      m_ldGTotCliffTalusCoarseErosion,
-      m_ldGTotPotentialBeachErosion,
-      m_ldGTotActualFineBeachErosion,
-      m_ldGTotActualSandBeachErosion,
-      m_ldGTotActualCoarseBeachErosion,
-      m_ldGTotSandBeachDeposition,
-      m_ldGTotCoarseBeachDeposition,
-      m_ldGTotSuspendedSediment,
-      m_ldGTotMassBalanceErosionError,
-      m_ldGTotMassBalanceDepositionError;
-
    string
       m_strDTMFile,                              // Digital Terrain Model raster file name
       m_strCLIFFDir,
@@ -242,12 +141,7 @@ private:
       m_strRasterGISOutFormat,
       m_strVectorGISOutFormat,
       m_strInitialBasementDEMFile,
-      m_strInitialLandformFile,
-      m_strInitialInterventionFile,
-      m_strInitialSuspSedimentFile,
       m_strInitialCoastlineFile,
-      m_strShapeFunctionFile,
-//       m_strTideDataFile,
       m_strLogFile,
       m_strOutPath,
       m_strOutFile,
@@ -328,6 +222,7 @@ private:
 
    // GIS input and output stuff
    int nReadDTMData(void);
+   int nReadVectorCoastlineData(void);
    bool bWriteRasterGISFloat(int const, string const*);
    bool bWriteRasterGISInt(int const, string const*, double const = 0);
    bool bWriteVectorGIS(int const, string const*);
@@ -400,6 +295,7 @@ private:
    static void AnnounceStart(void);
    void AnnounceLicence(void);
    void AnnounceReadDTM(void) const;
+   void AnnounceReadUserCoastLine(void);
    void AnnounceReadBasementDEM(void) const;
 //    static void AnnounceReadVectorFiles(void);
    void AnnounceReadLGIS(void) const;
@@ -413,7 +309,6 @@ private:
    static int nDoTimeUnits(string const*);
    int nDoSimulationTimeMultiplier(string const*);
    static double dGetTimeMultiplier(string const*);
-   void UpdateGrandTotals(void);
    static string strGetBuild(void);
    static string strGetComputerName(void);
    void DoCPUClockReset(void);
